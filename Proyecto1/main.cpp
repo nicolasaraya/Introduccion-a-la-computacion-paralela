@@ -1,3 +1,5 @@
+//g++ main.cpp -fopenmp -lm
+
 #include <iostream>
 #include <vector>
 #include <omp.h>
@@ -8,18 +10,23 @@
 using namespace std;
 
 void parallel(int* in, int* out, int NDATOS){
-    
+
     #pragma omp parallel for
     for(int i = 0; i < NDATOS; i++){
         out[i]= in[i];
+        
     }
 
-    for(int i = 0; i < log2(NDATOS); i++){
+    for(int i = 0; i < ceil(log2(NDATOS)); i++){
         #pragma omp parallel for
         for(int j = pow(2, i); j < NDATOS; j++){
-            out[j] +=  (in[ j - (int)pow(2,i) ]);
+            out[j] +=  in[ j - (int)pow(2,i) ];
         }
-        swap(in, out);
+        //esta va pal nico 🤝🤝🤝🤝🤝🤝🤝🤝🤝🤝🤝🤝🤝🤝🤝🤝🤝👌👌👌👌🤞🤞🖖🖖🤘👌🤙🤙🤙🤙🤙
+        #pragma omp parallel for
+        for (int j = pow(2, i); j < NDATOS; j++){
+            in[j] = out[j];
+        }
     }
 }
 
@@ -42,9 +49,8 @@ int main(int argc, char const *argv[]){
     
     #pragma omp parallel for
     for (int i = 0; i < NDATOS; i++){
-        in[i] = (i);
+        in[i] = (rand()%NDATOS);
     }
-    
     
     for (int i = 0; i < NDATOS; i++){
         cout << in[i] << " "; 
@@ -61,14 +67,6 @@ int main(int argc, char const *argv[]){
         cout << out[i] << " "; 
     }
     cout << endl; 
-    
-
-    
-     
-    
-
-
-    
 
     return 0;
 }
