@@ -18,28 +18,20 @@ void sequential(int * in, int* out, int NDATOS){
 }
 
 void parallel(int* in, int* out, int NDATOS){
-    int * aux = (int*)malloc(sizeof(int) * NDATOS);
   
-
     #pragma omp parallel for
     for(int i = 0; i < NDATOS; i++){
-        aux[i]= in[i];
         out[i] = in[i];
     }
     
     TIMERSTART(paralelo);
     for(int i = 0; i < ceil(log2(NDATOS)); i++){
-        
         #pragma omp parallel for
         for(int j = 1 << i; j < NDATOS; j++){
-            out[j] +=  aux[j - (1 << i)];
+            int aux = out[j] +  out[j - (1 << i)];
+            #pragma omp barrier 
+            out[j] = aux; 
         }
-                            
-        #pragma omp parallel for
-        for (int j = 1 << i; j < NDATOS; j++){
-            aux[j] = out[j];
-        }
-        
     }
     TIMERSTOP(paralelo);
 }
