@@ -1,12 +1,10 @@
-
-//g++ main.cpp -fopenmp -lm
-
 #include <iostream>
 #include <vector>
 #include <omp.h>
 #include <time.h>
 #include <math.h>
 #include "./metrictime2.hpp"
+#define cache 32
 
 
 using namespace std;
@@ -28,23 +26,23 @@ void sequentialParalell(vector<vector<int>>* in, vector<vector<int>>* out, int l
 
 void parallel(vector<vector<int>>* in, vector<vector<int>>* out, int nThreads){
     
-    int part = in->size() / nThreads; 
+    int part = (in->size()) / (nThreads-1); 
     int limits[nThreads][2];
     limits[0][0] = 0;
     limits[0][1] = part;
     for(int i = 1; i < nThreads; i++){
         limits[i][0] = part + limits[i-1][0];
         limits[i][1] = part + limits[i-1][1];
-        if( limits[i][1] > in->size() ) limits[i][1] = in->size();
+        //if( limits[i][1] > in->size() ) limits[i][1] = in->size();
     }
+    if( part*(nThreads-1) != (in->size()) ) limits[nThreads-1][1] = in->size();
 
-    
     #pragma omp parallel for
     for(int i = 0; i < nThreads; i++){
         //cout << "l: " << l << " r: "<< r << endl;
         sequentialParalell(in, out, limits[i][0],limits[i][1], true);
     }
-
+    
     for(int i = 2; i < nThreads; i++){  
         out->at( (i*part) - 1).at(0) += out->at( ((i-1)*(part))- 1).at(0);    
     }
@@ -77,8 +75,8 @@ int main(int argc, char const *argv[]){
     nDatos = atoi(argv[2]);
     if(nThreads > nDatos) nThreads = nDatos;
     
-    vector< vector<int> > in(nDatos+9, vector<int> (32, 0) ); 
-    vector< vector<int> > out(nDatos+9, vector<int> (32, 0) );
+    vector< vector<int> > in(nDatos, vector<int> (cache, 0) ); 
+    vector< vector<int> > out(nDatos, vector<int> (cache, 0) );
 
     
     for (int i = 0; i < nDatos; i++){
@@ -94,7 +92,7 @@ int main(int argc, char const *argv[]){
     TIMERSTOP(paralelo);
     
     TIMERSTART(secuencial);
-    sequential(&in, &out);
+    //sequential(&in, &out);
     TIMERSTOP(secuencial);
     
     //print (in, nDatos, nThreads);
