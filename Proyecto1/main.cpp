@@ -6,44 +6,53 @@
 #include <time.h>
 #include <math.h>
 #include "./metrictime2.hpp"
+#define cache 64
 
 
 using namespace std;
 
-void sequential(int * in, int* out, int NDATOS){
-    out[0] = in[0];
-    for (int i = 1; i < NDATOS; i++){
-        out[i] = out[i-1] + in[i];
+void print(vector<vector<int>> v, int nDatos, int nThreads);
+
+void sequential(vector<vector<int>> * in, vector<vector<int>>* out){
+    out->at(0).at(0) = in->at(0).at(0);
+    for (int i = 1; i < in->size(); i++){
+        out->at(i).at(0) = out->at(i-1).at(0) + in->at(i).at(0);
     }
 }
 
-void parallel(int* in, int* out, int NDATOS){
-    int * aux = (int*)malloc(sizeof(int) * NDATOS);
-  
+void parallel(vector<vector<int>>* in, vector<vector<int>>* out, int nThreads){
+    //int * aux = (int*)malloc(sizeof(int) * NDATOS);
+    vector<vector<int>> aux(in->size(), vector<int> (cache, 0) );;
 
     #pragma omp parallel for
-    for(int i = 0; i < NDATOS; i++){
-        aux[i]= in[i];
-        out[i] = in[i];
+    for(int i = 0; i < in->size(); i++){
+        aux.at(i).at(0)= in->at(i).at(0);
+        out->at(i).at(0) = in->at(i).at(0);
     }
     
     TIMERSTART(paralelo);
-    for(int i = 0; i < ceil(log2(NDATOS)); i++){
-        
+    for(int i = 0; i < ceil(log2(out->size())); i++){
         #pragma omp parallel for
-        for(int j = 1 << i; j < NDATOS; j++){
-            int aux = out[j] +  out[j - (1 << i)];
-            out[j] = aux; 
+        for(int j = (1<<i); j < out->size(); j++){
+            out->at(j).at(0) += aux.at((j-(1<<i))).at(0);
         }
-                            
         #pragma omp parallel for
-        for (int j = 1 << i; j < NDATOS; j++){
-            aux[j] = out[j];
+        for (int j = (1<<i); j < out->size(); j++){
+            aux.at(j).at(0) = out->at(j).at(0);
         }
         
     }
     TIMERSTOP(paralelo);
 }
+
+void print(vector<vector<int>> v, int nDatos, int nThreads){
+    for(int i = 0; i < nDatos; i++){
+        if (i % (nDatos/nThreads) == 0) cout << "  ";
+        cout << v[i][0] << " ";
+    }
+    cout << endl;
+}
+
 
 int main(int argc, char const *argv[]){
     srand(time(NULL));
@@ -57,39 +66,28 @@ int main(int argc, char const *argv[]){
     NTHREADS = atoi(argv[1]);
     NDATOS = atoi(argv[2]);
     
-    vector< vector<int> > in(NDATOS+9, vector<int> (cache, 0) ); 
-    vector< vector<int> > out(NDATOS+9, vector<int> (cache, 0) );
+    vector< vector<int> > in(NDATOS, vector<int> (cache, 0) ); 
+    vector< vector<int> > out(NDATOS, vector<int> (cache, 0) );
 
     omp_set_num_threads(NTHREADS);
-    #pragma omp parallel for
     for (int i = 0; i < NDATOS; i++){
-        in[i] = (rand()%NDATOS);
+        in[i][0] = rand()%10;
+        in[i][0] = i;
     }
 
-    /*
-    for (int i = 0; i < NDATOS; i++){
-        cout << in[i] << " "; 
-    }
-    cout << endl; */
 
     
-    parallel(in, out, NDATOS);
-    
+    parallel(&in , &out, NTHREADS);
+    print (in, NDATOS, NTHREADS);
+    print (out, NDATOS, NTHREADS);
 
     TIMERSTART(secuencial);
-    sequential(in, out, NDATOS);
+    //sequential(&in, &out);
     TIMERSTOP(secuencial);
 
 
-    /*    
-    for (int i = 0; i < NDATOS; i++){
-        cout << in[i] << " "; 
-    }
-    cout << endl; 
-    for (int i = 0; i < NDATOS; i++){
-        cout << out[i] << " "; 
-    }
-    cout << endl; */
+
+
 
     return 0;
 }
