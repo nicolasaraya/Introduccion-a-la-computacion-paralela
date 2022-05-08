@@ -67,13 +67,14 @@ int main(int argc, char const *argv[]){
     int nThreads, nDatos; 
     if(argc != 3){
         cout<<" uso: "<<argv[0]<<" \"n°hebras\" \"n°datos \"" << endl;
-
         return 1;
     }
-
+    
     nThreads = atoi(argv[1]);
     nDatos = atoi(argv[2]);
     if(nThreads > nDatos) nThreads = nDatos;
+
+    cout << "Threads: "<< nThreads << ", Datos: "<< nDatos << endl; 
     
     vector< vector<int> > in(nDatos, vector<int> (cache, 0) ); 
     vector< vector<int> > out(nDatos, vector<int> (cache, 0) );
@@ -92,9 +93,14 @@ int main(int argc, char const *argv[]){
     TIMERSTOP(paralelo);
     
     TIMERSTART(secuencial);
-    //sequential(&in, &out);
+    sequential(&in, &out);
     TIMERSTOP(secuencial);
     
+    in.clear();
+    in.shrink_to_fit();
+    out.clear();
+    out.shrink_to_fit();
+    cout << endl;
     //print (in, nDatos, nThreads);
     //print (out, nDatos, nThreads);
 

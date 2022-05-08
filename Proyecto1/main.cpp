@@ -69,6 +69,8 @@ int main(int argc, char const *argv[]){
     vector< vector<int> > in(NDATOS, vector<int> (cache, 0) ); 
     vector< vector<int> > out(NDATOS, vector<int> (cache, 0) );
 
+    cout << "Threads: "<< NTHREADS << ", Datos: "<< NDATOS << endl;
+
     omp_set_num_threads(NTHREADS);
     for (int i = 0; i < NDATOS; i++){
         in[i][0] = rand()%10;
@@ -84,7 +86,14 @@ int main(int argc, char const *argv[]){
     TIMERSTART(secuencial);
     //sequential(&in, &out);
     TIMERSTOP(secuencial);
+    cout << endl;
 
+
+    //free
+    in.clear();
+    in.shrink_to_fit();
+    out.clear();
+    out.shrink_to_fit();
 
 
 
