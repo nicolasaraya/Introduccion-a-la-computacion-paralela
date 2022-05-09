@@ -16,7 +16,7 @@ void sequential(vector<vector<int>> * in, vector<vector<int>>* out){
     }
 }
 
-void sequentialParalell(vector<vector<int>>* in, vector<vector<int>>* out, int l, int r, bool b){
+void sequentialParallel(vector<vector<int>>* in, vector<vector<int>>* out, int l, int r, bool b){
     if( b ) out->at(l).at(0) = in->at(l).at(0);
     for (int i = l+1; i < r; i++){
         out->at(i).at(0) = out->at(i-1).at(0) + in->at(i).at(0);
@@ -35,12 +35,12 @@ void parallel(vector<vector<int>>* in, vector<vector<int>>* out, int nThreads){
         limits[i][1] = part + limits[i-1][1];
         //if( limits[i][1] > in->size() ) limits[i][1] = in->size();
     }
-    for(int i = 0; i < nThreads; i++) cout<< limits[i][0] << " " << limits[i][1] <<endl;
+    //for(int i = 0; i < nThreads; i++) cout<< limits[i][0] << " " << limits[i][1] <<endl;
     
     #pragma omp parallel for
     for(int i = 0; i < nThreads; i++){
         //cout << "l: " << l << " r: "<< r << endl;
-        sequentialParalell(in, out, limits[i][0],limits[i][1], true);
+        sequentialParallel(in, out, limits[i][0],limits[i][1], true);
     }
     
     for(int i = 2; i < nThreads; i++){  
@@ -50,7 +50,7 @@ void parallel(vector<vector<int>>* in, vector<vector<int>>* out, int nThreads){
     #pragma omp parallel for
     for(int i = 1; i < nThreads; i++){
         //cout << "l: " << l << " r: "<< r << endl;
-        sequentialParalell(in, out, limits[i][0]-1,limits[i][1]-1, false);
+        sequentialParallel(in, out, limits[i][0]-1,limits[i][1]-1, false);
     }
 }
 
