@@ -84,7 +84,7 @@ int main(int argc, char const *argv[]){
     print (out, NDATOS, NTHREADS);
 
     TIMERSTART(secuencial);
-    //sequential(&in, &out);
+    sequential(&in, &out);
     TIMERSTOP(secuencial);
     cout << endl;
 
