@@ -80,8 +80,8 @@ int main(int argc, char const *argv[]){
 
     
     parallel(&in , &out, NTHREADS);
-    print (in, NDATOS, NTHREADS);
-    print (out, NDATOS, NTHREADS);
+    //print (in, NDATOS, NTHREADS);
+    //print (out, NDATOS, NTHREADS);
 
     TIMERSTART(secuencial);
     sequential(&in, &out);
