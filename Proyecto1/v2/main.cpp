@@ -26,7 +26,7 @@ void sequentialParalell(vector<vector<int>>* in, vector<vector<int>>* out, int l
 
 void parallel(vector<vector<int>>* in, vector<vector<int>>* out, int nThreads){
     
-    int part = (in->size()) / (nThreads-1); 
+    int part = (in->size()) / (nThreads); 
     int limits[nThreads][2];
     limits[0][0] = 0;
     limits[0][1] = part;
@@ -35,8 +35,8 @@ void parallel(vector<vector<int>>* in, vector<vector<int>>* out, int nThreads){
         limits[i][1] = part + limits[i-1][1];
         //if( limits[i][1] > in->size() ) limits[i][1] = in->size();
     }
-    if( part*(nThreads-1) != (in->size()) ) limits[nThreads-1][1] = in->size();
-
+    for(int i = 0; i < nThreads; i++) cout<< limits[i][0] << " " << limits[i][1] <<endl;
+    
     #pragma omp parallel for
     for(int i = 0; i < nThreads; i++){
         //cout << "l: " << l << " r: "<< r << endl;
@@ -96,6 +96,7 @@ int main(int argc, char const *argv[]){
     sequential(&in, &out);
     TIMERSTOP(secuencial);
     
+    //free
     in.clear();
     in.shrink_to_fit();
     out.clear();
