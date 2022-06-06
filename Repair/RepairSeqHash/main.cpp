@@ -7,7 +7,11 @@ using namespace std;
 int main(){
     DList* d = new DList();
 
-    for(int i = 0; i < 20; i++) d->insertEnd(i);
+    vector<int> v = {2, 3, 1, 2, 3, 1, 2, 3};
+    for(auto i : v) d->insertEnd(i);
+
+
+    d->prints();
 
     Repair(d);
 

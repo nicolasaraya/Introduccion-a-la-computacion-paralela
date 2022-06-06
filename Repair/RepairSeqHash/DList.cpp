@@ -27,7 +27,6 @@ Nodo* DList::nuevoNodo(int n){
 
 
 void DList::insertBefore(Nodo* n,int k){
-	
 	if(n == head){
 		insertStart(k);
 		return;
