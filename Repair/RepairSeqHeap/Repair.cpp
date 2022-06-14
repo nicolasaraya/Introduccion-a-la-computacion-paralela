@@ -2,7 +2,7 @@
 
 using namespace std; 
 
-Repair::Repair(vector<int> datos){
+Repair::Repair(vector<int>* datos){
     seq = new DList();
     crearSeq(datos);
     hp = new Heap(&mp);
@@ -17,8 +17,14 @@ Repair::Repair(DList* seq){
 
 }
 
-void Repair::crearSeq(vector<int> datos){
-    for(auto i : datos) seq->insertEnd(i);
+Repair::~Repair(){
+    delete(seq);
+    delete(hp);
+    mp.clear();
+}
+
+void Repair::crearSeq(vector<int>* datos){
+    for(auto i : *datos) seq->insertEnd(i);
 }
 
 void Repair::crearHeap(){

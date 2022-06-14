@@ -11,25 +11,25 @@ void RepairParallelInd(vector<int> datos, int nThreads);
 void mergeDList(DList* a, DList* b);
 
 
-void RepairParallelInd(vector<int> datos, int nThreads){
-	int nDatos = datos.size();
+void RepairParallelInd(vector<int>* datos, int nThreads){
+	int nDatos = datos->size();
 	
 	int partSize = nDatos/nThreads; 
 
     vector< vector<int> > subDatos(nThreads, vector<int>(0,0));
 
-	cout << "Tamaño de cada parte: " << partSize << endl;
+	//cout << "Tamaño de cada parte: " << partSize << endl;
 
     int k = 0;
     for(int i = 0; i < nThreads; i++){
         for(int j = 0; j < partSize; j++){
-            subDatos.at(i).push_back(datos.at(k));
+            subDatos.at(i).push_back(datos->at(k));
             k++;
         }
     }
-    cout << "k = " << k << endl;
-    while(k!=datos.size()){
-        subDatos.at(nThreads-1).push_back(datos.at(k));
+    //cout << "k = " << k << endl;
+    while(k!=datos->size()){
+        subDatos.at(nThreads-1).push_back(datos->at(k));
         k++;
     }
     
@@ -38,10 +38,10 @@ void RepairParallelInd(vector<int> datos, int nThreads){
     omp_set_num_threads(nThreads);
     //#pragma omp parallel for
     for(int i = 0; i < nThreads; i++){
-        Repair* r = new Repair(subDatos.at(i));
+        Repair* r = new Repair(&subDatos.at(i));
         r->cambiar();
-        cout << "Thread: " << i << endl; 
-        r->prints();
+        //cout << "Thread: " << i << endl; 
+        //r->prints();
         res.at(i) = r->getSeq();
     }
 

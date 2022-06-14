@@ -24,14 +24,16 @@ int main(int argc, char const *argv[]){
 	
 	
 	TIMERSTART(repair);	
-	Repair* r2 = new Repair(datos);
-	r2->cambiar();
+	Repair* r = new Repair(&datos);
+	r->cambiar();
+	r->prints();
 	TIMERSTOP(repair);
+	delete(r);
 	//r2->prints();	
 
 
 	TIMERSTART(repairParallel);	
-	RepairParallelInd(datos, nThreads);
+	RepairParallelInd(&datos, nThreads);
 	TIMERSTOP(repairParallel);
 
 

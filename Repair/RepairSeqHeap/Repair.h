@@ -20,12 +20,12 @@ class Repair : public RepairADT{
         
         
     public:
-        Repair(vector<int> datos);
+        Repair(vector<int>* datos);
         Repair(DList*);
         ~Repair(); 
         void cambiar();
         void prints();
-        void crearSeq(vector<int> datos); 
+        void crearSeq(vector<int>* datos); 
         DList* getSeq();
 };
 
