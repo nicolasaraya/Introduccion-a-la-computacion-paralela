@@ -15,6 +15,7 @@ class DList{
         int sz;
         Nodo* nuevoNodo(int);
         Nodo* end();
+        void setSize(int);
     public:
         DList();
         ~DList();
@@ -26,6 +27,9 @@ class DList{
         void insertBefore(Nodo*,int);
         void deleteEnd();
         void deleteNodo(Nodo*);
+        Nodo* back();
+        Nodo* first();
+        void merge(DList*, DList*);
         int size();
         
 };

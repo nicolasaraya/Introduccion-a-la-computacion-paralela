@@ -1,15 +1,15 @@
-#ifndef REPAIRV2_H
-#define REPAIRV2_H
+#ifndef REPAIR_H
+#define REPAIR_H
 #include "RepairADT.h"
 #include <map>
 
 using namespace std; 
 
 
-class Repairv2 : public RepairADT{
+class Repair : public RepairADT{
     private:
         DList* seq;
-        int mayor;
+        int mayor = 30;
         Heap* hp; 
         map<pair<int, int>,Data*> mp;
         void crearHeap();
@@ -20,10 +20,15 @@ class Repairv2 : public RepairADT{
         
         
     public:
-        Repairv2(DList*);
-        ~Repairv2(); 
+        Repair(vector<int> datos);
+        Repair(DList*);
+        ~Repair(); 
         void cambiar();
         void prints();
+        void crearSeq(vector<int> datos); 
+        DList* getSeq();
 };
+
+
 
 #endif

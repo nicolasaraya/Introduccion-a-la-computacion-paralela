@@ -1,53 +1,42 @@
-#include "Repairv1.h"
-#include "Repairv2.h"
+#include "Repair.h"
+#include "RepairParallelInd.h"
+#include "metrictime2.hpp"
 #include <time.h>
-
 using namespace std;
 
-int main(){
+int main(int argc, char const *argv[]){
 	srand(time(NULL));
-	DList *s = new DList();
-	DList *s1 = new DList();
-	/*
-	int c; 
-	while(cin>>c){
-		s->insertEnd(c);
-		s1->insertEnd(c);
-	}*/
+	vector<int> datos; 
 	
-	int n;
-	cin>>n;
-	for(int i = 0; i<n; i++){
-		int x = rand()%27+1;
-		x=1;
-		/*if(i==n/2){
-			s->insertEnd(2);
-			s1->insertEnd(2);
-		}*/
-		s->insertEnd(x);
-		s1->insertEnd(x);
+    if(argc != 3){
+        cout<<" uso: "<<argv[0]<<" \"n°hebras\" \"n°datos \"" << endl;
+        return 1;
+    }
+    int nThreads = atoi(argv[1]);
+    int nDatos = atoi(argv[2]);
+    if(nThreads > nDatos) nThreads = nDatos;
 
-	}
-	cout<<endl<<endl;
+    cout << "Threads: "<< nThreads << ", Datos: "<< nDatos << endl; 
 
-	clock_t start = clock(); 
-	double time;
-	Repairv1* r = new Repairv1(s);
-	cout<<"Solucion 1: ";
-	r->cambiar();
-	time = double(clock()-start)/CLOCKS_PER_SEC;
-	printf("%.6f\n", time);
-
-	cout<<endl;	
-	start=clock();
-	Repairv2* r2 = new Repairv2(s1);
-	cout<<"Solucion 2: ";
+	for(int i = 0; i<nDatos; i++) datos.push_back(1);
+	//for(auto i : datos) cout << i << " ";
+	cout << endl;
+	
+	
+	TIMERSTART(repair);	
+	Repair* r2 = new Repair(datos);
 	r2->cambiar();
-	time = double(clock()-start)/CLOCKS_PER_SEC;
-	printf("%.6f\n", time);
+	TIMERSTOP(repair);
+	//r2->prints();	
 
-	r->prints();
-	r2->prints();
-	
+
+	TIMERSTART(repairParallel);	
+	RepairParallelInd(datos, nThreads);
+	TIMERSTOP(repairParallel);
+
+
 	return 0;
 }
+
+
+

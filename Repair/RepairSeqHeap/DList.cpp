@@ -25,6 +25,9 @@ Nodo* DList::nuevoNodo(int n){
 	return nuevo;
 }
 
+void DList::setSize(int sz){
+	this->sz = sz; 
+}
 
 void DList::insertBefore(Nodo* n,int k){
 	
@@ -118,6 +121,7 @@ void DList::prints(){
 	cout<<endl;
 }
 
+
 Iterator DList::begin(){
 	Iterator it(head,tail);
 	return it;
@@ -126,3 +130,16 @@ Iterator DList::begin(){
 int DList::size(){
 	return sz;
 }
+
+Nodo* DList::back(){
+	return tail;
+}
+Nodo* DList::first(){
+	return head;
+}
+
+void DList::merge(DList* a, DList* b){
+	setSize(a->size() + b->size());
+	tail = b->back();
+}
+

@@ -1,16 +1,27 @@
-#include "Repairv2.h"
+#include "Repair.h"
 
 using namespace std; 
 
-Repairv2::Repairv2(DList* seq){
+Repair::Repair(vector<int> datos){
+    seq = new DList();
+    crearSeq(datos);
     hp = new Heap(&mp);
-    mayor=27;
-    this->seq=seq;
     if(seq->size()>=4) crearHeap();
     if(seq->size()<4) prints();
 }
+Repair::Repair(DList* seq){
+    this->seq = seq;
+    hp = new Heap(&mp);
+    if(seq->size()>=4) crearHeap();
+    if(seq->size()<4) prints();
 
-void Repairv2::crearHeap(){
+}
+
+void Repair::crearSeq(vector<int> datos){
+    for(auto i : datos) seq->insertEnd(i);
+}
+
+void Repair::crearHeap(){
     Iterator it = seq->begin();
     while(it.hasNext()){  
         Nodo* nodoA = it.next();
@@ -18,7 +29,8 @@ void Repairv2::crearHeap(){
         if(!it.hasNext())break;
         Nodo* nodoB = nodoA->getNext();
         int b = nodoB->getNum();
-        
+        if(a > mayor) mayor = a + 1;
+        if(b > mayor) mayor = b + 1;
         nodoA->setOP(NULL);
         if(mp.count({a, b})>0){
             nodoA->setOP(mp[{a, b}]->UltimaOc); //ocurrencia previa
@@ -41,11 +53,15 @@ void Repairv2::crearHeap(){
         }
 	}
 }
-void Repairv2::prints(){
+void Repair::prints(){
     seq->prints();
 }
 
-void Repairv2::cambiar(){
+DList* Repair::getSeq(){
+    return seq;
+}
+
+void Repair::cambiar(){
     if(seq->size()<4) return;
     mayor++;
     pair <int,int> dato = hp->top()->getPar();
@@ -54,12 +70,12 @@ void Repairv2::cambiar(){
         buscaOcurrencias(mp[dato]->PrimeraOc);    
         dato = hp->top()->getPar();
         mayor++;  
-    }    
+    } 
 }
 
 
 
-void Repairv2::buscaOcurrencias(Nodo* parUno){  
+void Repair::buscaOcurrencias(Nodo* parUno){  
     Nodo* parDos = parUno->getNext(); 
     int a = parUno->getNum();
     int b = parDos->getNum();
@@ -73,7 +89,7 @@ void Repairv2::buscaOcurrencias(Nodo* parUno){
     if(mp[{a,b}]->PrimeraOc==NULL || mp[{a,b}]->UltimaOc==NULL) return;     
     buscaOcurrencias(mp[{a,b}]->PrimeraOc); //llama la siguiente ocurrencia del par (a,b)
 }
-void Repairv2::actualizaHeap(Nodo* parUno, Nodo* parDos){
+void Repair::actualizaHeap(Nodo* parUno, Nodo* parDos){
     int a = parUno->getNum();
     int b = parDos->getNum();
     NodoHeap* aux;
@@ -81,7 +97,7 @@ void Repairv2::actualizaHeap(Nodo* parUno, Nodo* parDos){
     aux->setFrecuencia(aux->getFrecuencia()-1); //disminuye la frecuencia del par (a,b)
     hp->verifyDown(mp[{a,b}]->posHeap); //reordena el heap
 }
-void Repairv2::insertarHeap(Nodo* NodoA, Nodo* NodoB){
+void Repair::insertarHeap(Nodo* NodoA, Nodo* NodoB){
     int a = NodoA->getNum();
     int b = NodoB->getNum();
 
@@ -113,7 +129,7 @@ void Repairv2::insertarHeap(Nodo* NodoA, Nodo* NodoB){
 }
 
 
-void Repairv2::actualizarLista(Nodo* a, Nodo* b){
+void Repair::actualizarLista(Nodo* a, Nodo* b){
     //primero verifica si el par del nodo (a,b) se encuentra en la cabeza de la lista
     if(a->getPrev()==NULL){ 
         Nodo* siguiente = b->getNext();
